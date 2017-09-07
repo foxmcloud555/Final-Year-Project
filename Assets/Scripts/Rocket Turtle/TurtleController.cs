@@ -6,6 +6,11 @@ using System.Collections.Generic;
 
 public class TurtleController : ImageResultsListener {
 
+    //level generation
+    public GameObject levelRoom;
+    Vector3 lastPosition = new Vector3(0, 0, 0);
+    Vector3 offsetVector;
+    //end 
 
     public GameObject faceDetect;
 
@@ -16,9 +21,9 @@ public class TurtleController : ImageResultsListener {
     private Button[] buttons;
 
     Image image;
-    SpriteRenderer sr;
+    SpriteRenderer playerSr;
 
-    private bool timeOut = false;
+    public bool timeOut = false;
 
     private float coins;
 
@@ -60,7 +65,7 @@ public class TurtleController : ImageResultsListener {
     {
        
        
-       // sr.sprite = faceFound;
+       // playerSr.sprite = faceFound;
         image.sprite = faceFound;
     }
 
@@ -68,7 +73,7 @@ public class TurtleController : ImageResultsListener {
     {
         currentMouthOpen = 0;
        
-        //sr.sprite = faceNotFound;
+        //playerSr.sprite = faceNotFound;
         image.sprite = faceNotFound;
     }
 
@@ -83,13 +88,16 @@ public class TurtleController : ImageResultsListener {
 
     // Use this for initialization
     void Start () {
-        //sr = faceDetect.GetComponent<SpriteRenderer>();
+        //playerSr = faceDetect.GetComponent<SpriteRenderer>();
         image = faceDetect.GetComponent<Image>();
         animator = GetComponent<Animator>();
         timerText = timerText.GetComponent<Text>();
         coinText = coinText.GetComponent<Text>();
 
 
+        //level generator
+        InvokeRepeating("AddRoom",0.0f, 6.0f);
+        offsetVector = new Vector3(levelRoom.transform.FindChild("floor").localScale.x ,0, 0);
 
 
     }
@@ -129,7 +137,7 @@ public class TurtleController : ImageResultsListener {
 
         bool jetpackOn = currentMouthOpen > 3;
         
-       // jetpackOn = jetpackOn && !timeOut;
+        jetpackOn = jetpackOn && !timeOut;
 		
 		
 		
@@ -251,6 +259,15 @@ public class TurtleController : ImageResultsListener {
 
     }
 
-	
+    void AddRoom()
+    {
+        if (!timeOut)
+        {
+            UnityEngine.GameObject myPrefabInstance = GameObject.Instantiate(levelRoom, lastPosition + offsetVector, Quaternion.identity);
+            lastPosition = myPrefabInstance.transform.position;
+        }
+    }
+
+
 
 }
